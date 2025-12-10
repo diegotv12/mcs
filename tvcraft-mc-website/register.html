@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - TVCRAFT MC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/icontvcraftmc.png">
+    <style>
+        .auth-section { min-height: calc(100vh - 200px); display: flex; align-items: center; }
+        .auth-container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+        @media (max-width: 992px) { .auth-container { grid-template-columns: 1fr; } }
+        .auth-card { background-color: #0b0a15; border-radius: 16px; padding: 2.5rem; border: 1px solid #1a1829; box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
+        .auth-header { text-align: center; margin-bottom: 2rem; }
+        .auth-header h2 { font-size: 2rem; margin-bottom: 0.5rem; color: #fec600; }
+        .auth-header p { color: #b0b0c0; }
+        .auth-form .form-group { margin-bottom: 1.5rem; }
+        .auth-form label { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-weight: 500; color: #ffffff; }
+        .auth-form input { width: 100%; padding: 0.75rem 1rem; background-color: rgba(255,255,255,0.05); border: 1px solid rgba(254,198,0,0.2); border-radius: 8px; color: #ffffff; font-family: 'Montserrat', sans-serif; font-size: 1rem; transition: 250ms ease; }
+        .auth-form input:focus { outline: none; border-color: #fec600; box-shadow: 0 0 10px rgba(254,198,0,0.5); }
+        .password-strength { margin-top: 0.5rem; }
+        .strength-bar { height: 4px; background-color: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .strength-fill { height: 100%; width: 0%; transition: width 300ms ease; }
+        .strength-weak { background-color: #f44336; }
+        .strength-medium { background-color: #ff9800; }
+        .strength-strong { background-color: #00c853; }
+        .strength-text { font-size: 0.75rem; color: #b0b0c0; margin-top: 0.25rem; }
+        .skin-preview-container { margin-top: 1rem; text-align: center; }
+        .skin-preview-label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #ffffff; }
+        .skin-preview-box { width: 120px; height: 120px; margin: 0 auto; border: 2px solid #fec600; border-radius: 8px; overflow: hidden; background-color: rgba(0,0,0,0.3); position: relative; }
+        .skin-preview-box img { width: 100%; height: 100%; object-fit: cover; }
+        .skin-preview-box .default-head { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #b0b0c0; }
+        .default-skins { display: flex; gap: 0.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .default-skin-btn { padding: 0.25rem 0.5rem; background: rgba(254,198,0,0.1); border: 1px solid rgba(254,198,0,0.3); border-radius: 4px; color: #b0b0c0; font-size: 0.75rem; cursor: pointer; transition: 250ms ease; }
+        .default-skin-btn:hover { background: rgba(254,198,0,0.2); color: #fec600; }
+        .btn-block { width: 100%; }
+        .auth-footer { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(254,198,0,0.1); text-align: center; color: #b0b0c0; }
+        .auth-footer a { color: #fec600; text-decoration: none; }
+        .auth-footer a:hover { text-decoration: underline; }
+        .auth-info { display: flex; flex-direction: column; gap: 1.5rem; }
+        .info-card { background-color: #0b0a15; border-radius: 12px; padding: 1.5rem; text-align: center; border: 1px solid rgba(254,198,0,0.1); transition: 250ms ease; }
+        .info-card:hover { border-color: #fec600; transform: translateY(-5px); }
+        .info-card i { font-size: 2rem; color: #fec600; margin-bottom: 1rem; }
+        .info-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .info-card p { color: #b0b0c0; font-size: 0.875rem; }
+        .skin-loading { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; color: #fec600; }
+    </style>
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <img src="assets/img/icontvcraftmc.png" alt="TVCRAFT MC Logo">
+                <span>TVCRAFT MC</span>
+            </a>
+            
+            <div class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link"><i class="fas fa-home"></i> Inicio</a>
+                <a href="tienda.html" class="nav-link"><i class="fas fa-store"></i> Tienda</a>
+                <a href="anuncios.html" class="nav-link"><i class="fas fa-ad"></i> Anuncios</a>
+                <a href="canjear.html" class="nav-link"><i class="fas fa-gift"></i> Canjear Código</a>
+                <a href="perfil.html" class="nav-link"><i class="fas fa-user"></i> Perfil</a>
+                <div class="nav-auth" id="navAuth">
+                    <!-- Se llena dinámicamente -->
+                </div>
+            </div>
+            
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Sección de Registro -->
+    <section class="section auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2>Crear Cuenta</h2>
+                        <p>Únete a TVCRAFT MC y comienza tu aventura</p>
+                    </div>
+                    
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i> Email
+                            </label>
+                            <input type="email" id="email" name="email" required 
+                                   placeholder="tu@email.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nick">
+                                <i class="fas fa-user"></i> Nombre de Usuario (Nick)
+                            </label>
+                            <input type="text" id="nick" name="nick" required 
+                                   placeholder="Tu nombre en el juego">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="password">
+                                <i class="fas fa-lock"></i> Contraseña
+                            </label>
+                            <input type="password" id="password" name="password" required 
+                                   placeholder="••••••••" minlength="6">
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strengthFill"></div>
+                                </div>
+                                <div class="strength-text" id="strengthText">Seguridad de la contraseña</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">
+                                <i class="fas fa-lock"></i> Confirmar Contraseña
+                            </label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required 
+                                   placeholder="••••••••" minlength="6">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="skinUrl">
+                                <i class="fas fa-user-astronaut"></i> URL de tu Skin (Obligatorio)
+                            </label>
+                            <input type="text" id="skinUrl" name="skinUrl" required 
+                                   placeholder="https://ejemplo.com/mi-skin.png">
+                            <small style="color: #b0b0c0; display: block; margin-top: 0.5rem;">
+                                Puedes subir tu skin a <a href="https://imgbb.com/" target="_blank" style="color: #fec600;">imgBB</a> o usar una predeterminada:
+                            </small>
+                            <div class="default-skins">
+                                <button type="button" class="default-skin-btn" data-skin-url="https://mc-heads.net/head/Steve">Steve</button>
+                                <button type="button" class="default-skin-btn" data-skin-url="https://mc-heads.net/head/Alex">Alex</button>
+                                <button type="button" class="default-skin-btn" data-skin-url="https://mc-heads.net/head/Villager">Vendedor</button>
+                                <button type="button" class="default-skin-btn" data-skin-url="https://mc-heads.net/head/Chicken">Pato</button>
+                                <button type="button" class="default-skin-btn" data-skin-url="https://mc-heads.net/head/Computer">PC</button>
+                            </div>
+                            
+                            <div class="skin-preview-container">
+                                <div class="skin-preview-label">Vista previa de tu skin:</div>
+                                <div class="skin-preview-box" id="skinPreviewBox">
+                                    <div class="default-head">
+                                        <i class="fas fa-user-circle fa-3x"></i>
+                                    </div>
+                                </div>
+                                <small style="color: #b0b0c0; display: block; margin-top: 0.5rem; font-size: 0.75rem;">
+                                    La vista previa se actualizará automáticamente
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" name="terms" required>
+                                <span>Acepto los <a href="#" style="color: #fec600;">Términos y Condiciones</a></span>
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-user-plus"></i> Crear Cuenta
+                        </button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        <p>¿Ya tienes una cuenta? 
+                            <a href="login.html">Inicia sesión aquí</a>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="auth-info">
+                    <div class="info-card">
+                        <i class="fas fa-gift"></i>
+                        <h3>¡Regalo de Bienvenida!</h3>
+                        <p>Al registrarte recibes 50 TCoins gratis para comenzar</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-store"></i>
+                        <h3>Acceso Completo</h3>
+                        <p>Compra en la tienda y mejora tu experiencia de juego</p>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-users"></i>
+                        <h3>Comunidad Activa</h3>
+                        <p>Únete a nuestra comunidad de jugadores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="assets/img/icontvcraftmc.png" alt="Logo">
+                    <h3>TVCRAFT MC</h3>
+                    <p>Servidor de Minecraft Bedrock<br>Modalidad Supervivencia</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Enlaces</h4>
+                    <a href="tienda.html">Tienda</a>
+                    <a href="anuncios.html">Anuncios</a>
+                    <a href="canjear.html">Canjear Código</a>
+                    <a href="perfil.html">Perfil</a>
+                </div>
+                <div class="footer-social">
+                    <h4>Síguenos</h4>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TVCRAFT MC. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script>
+        // Script específico para el registro
+        document.addEventListener('DOMContentLoaded', function() {
+            // Referencias a elementos
+            const skinUrlInput = document.getElementById('skinUrl');
+            const skinPreviewBox = document.getElementById('skinPreviewBox');
+            const defaultSkinBtns = document.querySelectorAll('.default-skin-btn');
+            
+            // URLs de skins predeterminadas (solo cabezas)
+            const defaultHeads = [
+                'https://mc-heads.net/head/Steve/100',
+                'https://mc-heads.net/head/Alex/100',
+                'https://mc-heads.net/head/Villager/100',
+                'https://mc-heads.net/head/Chicken/100',
+                'https://mc-heads.net/head/Computer/100'
+            ];
+            
+            // Cargar una skin predeterminada al inicio (Steve)
+            loadSkinPreview(defaultHeads[0]);
+            
+            // Función para cargar vista previa de skin
+            function loadSkinPreview(skinUrl) {
+                if (!skinPreviewBox) return;
+                
+                // Mostrar loading
+                skinPreviewBox.innerHTML = '<div class="skin-loading"><i class="fas fa-spinner fa-spin"></i></div>';
+                
+                // Crear imagen
+                const img = new Image();
+                img.onload = function() {
+                    skinPreviewBox.innerHTML = '';
+                    skinPreviewBox.appendChild(img);
+                };
+                
+                img.onerror = function() {
+                    // Si falla, usar Steve como fallback
+                    const fallbackImg = new Image();
+                    fallbackImg.src = defaultHeads[0];
+                    fallbackImg.onload = function() {
+                        skinPreviewBox.innerHTML = '';
+                        skinPreviewBox.appendChild(fallbackImg);
+                        skinUrlInput.value = defaultHeads[0];
+                        showError('La URL de la skin no es válida. Se usará Steve por defecto.');
+                    };
+                };
+                
+                img.src = skinUrl;
+                img.alt = 'Vista previa de skin';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+            }
+            
+            // Evento para el input de skin URL
+            if (skinUrlInput) {
+                skinUrlInput.addEventListener('input', function() {
+                    const url = this.value.trim();
+                    if (url) {
+                        // Validar que sea una URL válida
+                        try {
+                            new URL(url);
+                            loadSkinPreview(url);
+                        } catch (error) {
+                            // Si no es una URL válida, usar Steve
+                            loadSkinPreview(defaultHeads[0]);
+                        }
+                    } else {
+                        // Si está vacío, usar Steve
+                        loadSkinPreview(defaultHeads[0]);
+                    }
+                });
+                
+                // También validar al cambiar el foco
+                skinUrlInput.addEventListener('blur', function() {
+                    if (!this.value.trim()) {
+                        this.value = defaultHeads[0];
+                        loadSkinPreview(defaultHeads[0]);
+                    }
+                });
+            }
+            
+            // Eventos para botones de skins predeterminadas
+            defaultSkinBtns.forEach((btn, index) => {
+                btn.addEventListener('click', function() {
+                    const skinUrl = this.dataset.skinUrl + '/100'; // Asegurar tamaño 100px
+                    skinUrlInput.value = skinUrl;
+                    loadSkinPreview(skinUrl);
+                    
+                    // Mostrar mensaje de confirmación
+                    showSkinSelectedMessage(this.textContent);
+                });
+            });
+            
+            // Función para mostrar mensaje de skin seleccionada
+            function showSkinSelectedMessage(skinName) {
+                const message = document.createElement('div');
+                message.textContent = `Skin "${skinName}" seleccionada`;
+                message.style.position = 'fixed';
+                message.style.top = '20px';
+                message.style.right = '20px';
+                message.style.backgroundColor = '#00c853';
+                message.style.color = 'white';
+                message.style.padding = '0.75rem 1rem';
+                message.style.borderRadius = '8px';
+                message.style.zIndex = '9999';
+                message.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+                message.style.animation = 'slideIn 0.3s ease';
+                
+                // Estilos para animación
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                document.body.appendChild(message);
+                
+                // Remover después de 3 segundos
+                setTimeout(() => {
+                    message.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            document.body.removeChild(message);
+                        }
+                        if (style.parentNode) {
+                            document.head.removeChild(style);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+            
+            // Validación del formulario de registro
+            const registerForm = document.getElementById('registerForm');
+            if (registerForm) {
+                registerForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Validar que haya una skin seleccionada
+                    const skinUrl = skinUrlInput.value.trim();
+                    if (!skinUrl) {
+                        showError('Debes seleccionar una skin para tu personaje');
+                        skinUrlInput.focus();
+                        return false;
+                    }
+                    
+                    // Validar que sea una URL válida
+                    try {
+                        new URL(skinUrl);
+                    } catch (error) {
+                        showError('La URL de la skin no es válida. Usa una de las predeterminadas o una URL válida.');
+                        skinUrlInput.focus();
+                        return false;
+                    }
+                    
+                    // Si todo está bien, enviar el formulario
+                    // (la función handleRegister del auth.js se encargará del resto)
+                    window.handleRegister(e);
+                });
+            }
+            
+            // Función para mostrar errores (si no está definida en main.js)
+            function showError(message) {
+                if (window.showError) {
+                    window.showError(message);
+                } else {
+                    alert('Error: ' + message);
+                }
+            }
+            
+            // Configurar indicador de fuerza de contraseña
+            const passwordInput = document.getElementById('password');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (passwordInput && strengthFill && strengthText) {
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const strength = calculatePasswordStrength(password);
+                    
+                    // Actualizar barra de fuerza
+                    strengthFill.style.width = `${strength.percentage}%`;
+                    strengthFill.className = `strength-fill ${strength.class}`;
+                    
+                    // Actualizar texto
+                    strengthText.textContent = strength.text;
+                    strengthText.style.color = strength.color;
+                });
+                
+                // Calcular fuerza de contraseña
+                function calculatePasswordStrength(password) {
+                    let score = 0;
+                    
+                    // Longitud mínima
+                    if (password.length >= 8) score += 25;
+                    if (password.length >= 12) score += 25;
+                    
+                    // Caracteres variados
+                    if (/[A-Z]/.test(password)) score += 15;
+                    if (/[a-z]/.test(password)) score += 15;
+                    if (/[0-9]/.test(password)) score += 15;
+                    if (/[^A-Za-z0-9]/.test(password)) score += 15;
+                    
+                    // Determinar nivel
+                    if (score >= 80) {
+                        return {
+                            percentage: 100,
+                            class: 'strength-strong',
+                            text: 'Contraseña fuerte',
+                            color: '#00c853'
+                        };
+                    } else if (score >= 50) {
+                        return {
+                            percentage: 66,
+                            class: 'strength-medium',
+                            text: 'Contraseña media',
+                            color: '#ff9800'
+                        };
+                    } else if (score >= 25) {
+                        return {
+                            percentage: 33,
+                            class: 'strength-weak',
+                            text: 'Contraseña débil',
+                            color: '#f44336'
+                        };
+                    } else {
+                        return {
+                            percentage: 0,
+                            class: '',
+                            text: 'Ingresa una contraseña',
+                            color: '#b0b0c0'
+                        };
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
